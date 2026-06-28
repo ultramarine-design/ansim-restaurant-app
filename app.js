@@ -118,7 +118,8 @@ function filtered(){
   const q = state.q.trim().toLowerCase();
   return state.rows.filter(r => {
     if(state.gu !== '전체' && r[1] !== state.gu) return false;
-    if(state.cat !== '전체' && r[2] !== state.cat) return false;
+    if(state.cat === '국밥'){ if(!r[0].includes('국밥')) return false; }   // 이름 기반 빠른 필터
+    else if(state.cat !== '전체' && r[2] !== state.cat) return false;
     if(q && !(r[0].toLowerCase().includes(q) || r[3].toLowerCase().includes(q))) return false;
     return true;
   });
@@ -134,11 +135,17 @@ function renderRegion(){
   const catSet = {};
   state.rows.forEach(r => { catSet[r[2]] = (catSet[r[2]]||0)+1; });
   const cats = Object.keys(catSet).sort((a,b)=>catSet[b]-catSet[a]);
-  const catChips = ['<button class="cat" data-cat="전체" aria-pressed="'+(state.cat==='전체')+'">전체</button>']
-    .concat(cats.map(c => {
-      const m = catMeta(c);
-      return '<button class="cat" data-cat="'+esc(c)+'" aria-pressed="'+(state.cat===c)+'" style="--g:'+m.c+'"><span class="dot"></span>'+esc(m.label)+'</button>';
-    })).join('');
+  const catBtn = (cat,label,color,extra='') =>
+    '<button class="cat'+extra+'" data-cat="'+esc(cat)+'" aria-pressed="'+(state.cat===cat)+'" style="--g:'+color+'"><span class="dot"></span>'+esc(label)+'</button>';
+  const gukbapBtn = catBtn('국밥','국밥','#bf5a2a',' gukbap');
+  const catList = ['<button class="cat" data-cat="전체" aria-pressed="'+(state.cat==='전체')+'">전체</button>'];
+  cats.forEach(c => {
+    const m = catMeta(c);
+    catList.push(catBtn(c, m.label, m.c));
+    if(c === '한식') catList.push(gukbapBtn);          // 한식 바로 다음에 국밥
+  });
+  if(!cats.includes('한식')) catList.splice(1, 0, gukbapBtn);
+  const catChips = catList.join('');
 
   view.innerHTML =
     `<div class="controls">

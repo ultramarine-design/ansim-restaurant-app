@@ -3,7 +3,7 @@
 유효(RELAX_USE_YN=Y)만 추려 시도별 17개 파일과 index.json 을 만든다.
 사용: python3 build_data.py
 """
-import csv, json, os, collections
+import csv, json, os, collections, html
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(HERE, '..', 'ansim-restaurant-briefing', 'cache', '전국_안심식당.csv')
@@ -29,13 +29,15 @@ def main():
         recs = by_sido[sido]
         slug = f'sido-{i:02d}'
         gu_count = collections.Counter(r['RELAX_SIDO_NM'].strip() for r in recs)
+        # 원본에 &amp; 등 HTML 엔티티가 이중 인코딩된 값이 있어 풀어준다.
+        cell = lambda v: html.unescape(v.strip())
         arr = [[
-            r['RELAX_RSTRNT_NM'].strip(),       # nm
-            r['RELAX_SIDO_NM'].strip(),         # gu (시군구)
-            r['RELAX_GUBUN_DETAIL'].strip(),    # gb (업종상세)
-            r['RELAX_ADD1'].strip(),            # ad (도로명 주소)
-            r['RELAX_RSTRNT_TEL'].strip(),      # tel
-            r['RELAX_RSTRNT_REG_DT'].strip(),   # dt (지정일)
+            cell(r['RELAX_RSTRNT_NM']),       # nm
+            cell(r['RELAX_SIDO_NM']),         # gu (시군구)
+            cell(r['RELAX_GUBUN_DETAIL']),    # gb (업종상세)
+            cell(r['RELAX_ADD1']),            # ad (도로명 주소)
+            cell(r['RELAX_RSTRNT_TEL']),      # tel
+            cell(r['RELAX_RSTRNT_REG_DT']),   # dt (지정일)
         ] for r in recs]
         arr.sort(key=lambda x: (x[1], x[0]))
         with open(os.path.join(OUT_DIR, slug + '.json'), 'w', encoding='utf-8') as f:

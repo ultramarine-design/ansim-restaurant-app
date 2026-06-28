@@ -1,6 +1,6 @@
 // 안심식당 서비스워커 — 앱 셸 + 받은 지역 데이터 오프라인 캐시
-const SHELL = 'ansim-shell-v1';
-const DATA  = 'ansim-data-v1';
+const SHELL = 'ansim-shell-v2';
+const DATA  = 'ansim-data-v2';
 const SHELL_FILES = [
   './', './index.html', './app.css', './app.js',
   './manifest.webmanifest', './data/index.json'

@@ -132,6 +132,8 @@ main{padding:18px 16px calc(40px + var(--safe-b))}
 }
 .cat .dot{width:8px;height:8px;border-radius:50%;background:var(--g,#bbb)}
 .cat[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cat.gukbap{border-color:#e9c9b3;background:#fbf1e8;color:var(--clay)}
+.cat.gukbap[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:#fff}
 .cat:active{transform:scale(.95)}
 
 /* ── 결과 ── */
@@ -225,5 +227,7 @@ main{padding:18px 16px calc(40px + var(--safe-b))}
   .controls{background:linear-gradient(var(--paper) 72%,rgba(26,24,21,0))}
   .card .act.naver,.chip[aria-pressed="true"]{color:#11140f}
   .card .act.photo{color:var(--clay);border-color:#3a2c22;background:#2a211b}
+  .cat.gukbap{border-color:#3a2c22;background:#2a211b;color:var(--clay)}
+  .cat.gukbap[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:#11140f}
   .lede h2 em{box-shadow:inset 0 -.5em 0 var(--pine-ghost);color:var(--pine-2)}
 }
