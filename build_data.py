@@ -29,8 +29,15 @@ def main():
         recs = by_sido[sido]
         slug = f'sido-{i:02d}'
         gu_count = collections.Counter(r['RELAX_SIDO_NM'].strip() for r in recs)
-        # 원본에 &amp; 등 HTML 엔티티가 이중 인코딩된 값이 있어 풀어준다.
-        cell = lambda v: html.unescape(v.strip())
+        # 원본에 &amp;amp; 처럼 이중·삼중 인코딩된 값이 있어 안정될 때까지 푼다.
+        def cell(v):
+            s = v.strip()
+            for _ in range(5):
+                u = html.unescape(s)
+                if u == s:
+                    break
+                s = u
+            return s
         arr = [[
             cell(r['RELAX_RSTRNT_NM']),       # nm
             cell(r['RELAX_SIDO_NM']),         # gu (시군구)
