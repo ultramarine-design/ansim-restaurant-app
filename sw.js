@@ -1,6 +1,8 @@
-// 안심식당 서비스워커 — 앱 셸 + 받은 지역 데이터 오프라인 캐시
-const SHELL = 'ansim-shell-v3';
-const DATA  = 'ansim-data-v3';
+// 안심식당 서비스워커
+// 앱 셸: 네트워크 우선(온라인이면 항상 최신, 오프라인이면 캐시). 갱신 지연 방지.
+// 지역 데이터(큰 파일): 캐시 우선(버전으로 갱신).
+const SHELL = 'ansim-shell-v4';
+const DATA  = 'ansim-data-v4';
 const SHELL_FILES = [
   './', './index.html', './app.css', './app.js',
   './manifest.webmanifest', './data/index.json'
@@ -31,6 +33,14 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
-  // 앱 셸: 캐시 우선, 네트워크 폴백
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request)));
+  // 앱 셸 + index.json: 네트워크 우선. 받으면 캐시 갱신, 실패하면 캐시.
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        const copy = res.clone();
+        caches.open(SHELL).then(c => c.put(e.request, copy));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
+  );
 });
